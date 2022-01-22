@@ -1,1 +1,1 @@
-## This is a Express API project that use typescript
+## This is a Express API project that using typescript
