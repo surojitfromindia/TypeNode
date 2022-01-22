@@ -5,6 +5,8 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "allowUnreachableCode": false,
+    "alwaysStrict": true
   }
 }

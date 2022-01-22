@@ -23,6 +23,3 @@ app.use("/api/v1", apiV1Router);
 app.listen(env.PORT, () => {
   console.log('Application started on port 3000!');
 });
-
-console.log("Hello");
-
