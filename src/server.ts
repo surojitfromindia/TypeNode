@@ -1,6 +1,7 @@
 import express, {json} from 'express';
 import {env} from "process"
-import { Application  } from 'express';
+import { Application, ErrorRequestHandler  } from 'express';
+import{errorHandler} from "./middlewares/errorHandler"
 
 //import the routes
 import {router as apiV1Router} from "./routes/v1";
@@ -18,6 +19,7 @@ app.use(json({limit: env.REQ_LIMIT}));
 
 
 app.use("/api/v1", apiV1Router);
+app.use(errorHandler);
 
 
 app.listen(env.PORT, () => {

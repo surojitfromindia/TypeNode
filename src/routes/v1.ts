@@ -1,22 +1,27 @@
-import { Router, RouterOptions } from "express";
+import { Router } from "express";
 import { Request, Response } from "express";
+import {router as ShopRoute} from "./v1/shops";
 
 
 const router:Router =  Router({caseSensitive: true});
 
-router.get("/",(_req:Request, res:Response, next) => {
+//get test
+router.get("/",(_req:Request, res:Response) => {
     res.status(200).send("API v1");
 })
 
-router.post("/json_test", (req:Request,res,next) => {
-    let json_body = req.body;
+//post test
+router.post("/json_test", (req:Request,res) => {
+    const json_body = req.body;
     res.status(200).send(json_body);
 })
 
-router.all("/*", (req:Request,res,next) => {
+router.use("/shops",ShopRoute);
+
+
+router.all("/*", (_req:Request,res) => {
     res.status(404).send("Not Found");
 })
 
 
-//export the router
 export  {router};
