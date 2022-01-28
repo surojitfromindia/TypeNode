@@ -20,6 +20,7 @@ const errorHandler: ErrorRequestHandler = (
 ) => {
   const messages: string[] = err?.message ? [err.message] : err?.messages;
   res.status(err.statusCode).json({
+    success : false,
     status: err.statusCode,
     messages: messages,
   });

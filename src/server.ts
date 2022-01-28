@@ -1,27 +1,22 @@
-import express, {json} from 'express';
-import {env} from "process"
-import { Application, ErrorRequestHandler  } from 'express';
-import{errorHandler} from "./middlewares/errorHandler"
-
+import express, { json } from 'express';
+import { Application } from 'express';
+import { errorHandler } from './middlewares/errorHandler';
+import { connect as connectToDb } from './connection/db';
+import * as dotenv from 'dotenv';
 //import the routes
-import {router as apiV1Router} from "./routes/v1";
+import { router as apiV1Router } from './routes/v1';
 
-//node enviroments
-env.PORT = "5000";
-env.REQ_LIMIT = "100";
+dotenv.config({ debug: true, path: __dirname + '/.env' });
 
-const app : Application= express();
+connectToDb();
 
-//json body parser only parse those body
-//whoes content-type is application/json
-app.use(json({limit: env.REQ_LIMIT}));
+const app: Application = express();
 
 
-
-app.use("/api/v1", apiV1Router);
+app.use(json({ limit: 100 }));
+app.use('/api/v1', apiV1Router);
 app.use(errorHandler);
 
-
-app.listen(env.PORT, () => {
-  console.log('Application started on port 3000!');
+app.listen(process.env.PORT, () => {
+  console.log(`Application started on port ${process.env.PORT}!`);
 });
