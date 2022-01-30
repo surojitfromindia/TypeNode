@@ -6,7 +6,6 @@ import { shopSchema } from '../../validation/shop';
 
 const router: Router = Router({ caseSensitive: true });
 
-
 router.get('/', getAllShops);
 router.post('/', validatePayload(shopSchema), createShop);
 

@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { Request, Response } from "express";
 import {router as ShopRoute} from "./v1/shops";
+import {router as FileRoute } from "./v1/files";
+
 
 
 const router:Router =  Router({caseSensitive: true});
@@ -17,6 +19,8 @@ router.post("/json_test", (req:Request,res) => {
 })
 
 router.use("/shops",ShopRoute);
+router.use("/files",FileRoute);
+
 
 
 router.all("/*", (_req:Request,res) => {
