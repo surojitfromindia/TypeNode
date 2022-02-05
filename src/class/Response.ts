@@ -1,3 +1,5 @@
+import { string } from 'joi';
+
 class ErrorResponse extends Error {
   constructor(
     public statusCode: number,
@@ -19,14 +21,14 @@ interface successBody {
 
 const successResponse = (
   statusCode: number,
-  body: object,
+  body: any,
   message?: string,
   exclude?: string[]
 ): successBody => {
   if (exclude) {
-    exclude.forEach((key) => {
+    for (const key in body) {
       delete body[key];
-    });
+    }
   }
   return { success: true, status: statusCode, data: body, message };
 };

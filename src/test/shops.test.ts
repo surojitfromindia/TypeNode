@@ -1,7 +1,7 @@
 import { connectMock, closeMock, dropMockDb } from '../connection/db';
 import { createShopController } from '../controllers/v1/shops';
 import { shopSchema } from '../validation/shop';
-import { Shop } from '../models/Shops';
+import { IShop as Shop } from '../Interface/IShop';
 
 describe('validate shop model', () => {
   test('sub shop body must have name and stuff_counr', () => {
@@ -77,7 +77,7 @@ describe('save single shop with multiple sub shop in data', () => {
     //@ts-ignore
     const result = await createShopController(mainShop);
     expect(result.name).toBe(mainShop.name);
-    expect(result.sub_shops.length).toBe(2);
+    expect(result?.sub_shops?.length).toBe(2);
   });
 });
-``;
+

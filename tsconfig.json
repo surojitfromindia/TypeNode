@@ -8,5 +8,6 @@
     "esModuleInterop": true,
     "allowUnreachableCode": false,
     "alwaysStrict": true,
+    "strict": true,
   }
 }

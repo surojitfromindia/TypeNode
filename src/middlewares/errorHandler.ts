@@ -1,12 +1,9 @@
 import type { ErrorRequestHandler, Response } from 'express';
+import { string } from 'joi';
 
 class ErrorResponse extends Error {
-  constructor(
-    public statusCode: number,
-    public message: string,
-    public messages?: string[]
-  ) {
-    super(message);
+  constructor(public statusCode: number, public messages: string[]) {
+    super();
     this.statusCode = statusCode;
     this.messages = messages;
   }
@@ -18,9 +15,9 @@ const errorHandler: ErrorRequestHandler = (
   res: Response,
   _next
 ) => {
-  const messages: string[] = err?.message ? [err.message] : err?.messages;
+  const messages: string[] = Array.isArray(err?.messages) ? err.messages : [];
   res.status(err.statusCode).json({
-    success : false,
+    success: false,
     status: err.statusCode,
     messages: messages,
   });

@@ -1,16 +1,19 @@
-import { ObjectSchema } from 'joi';
+import Joi, { ObjectSchema, ValidationError } from 'joi';
 import { ErrorResponse } from '../middlewares/errorHandler';
 import { errorArray } from '../validation/utils';
+import { Response, Request, NextFunction } from 'express';
 
 const validatePayload =
   (schema: ObjectSchema) =>
-  async (req, _res, next): Promise<void> => {
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const payload = req?.body;
       await schema.validateAsync(payload);
       next();
-    } catch (err) {
-      next(new ErrorResponse(400, undefined, errorArray(err)));
+    } catch (err: any) {
+      if (err instanceof ValidationError) {
+        next(new ErrorResponse(400, errorArray(err)));
+      }
     }
   };
-export {validatePayload };
+export { validatePayload };

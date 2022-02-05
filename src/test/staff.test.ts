@@ -1,6 +1,7 @@
 import { staffSchema } from '../validation/staff';
 import { connectMock, closeMock, dropMockDb } from '../connection/db';
 import { createStaffController } from '../controllers/v1/staff';
+import {IStaff} from "../Interface/IStaff"
 
 describe('validate staff creation and save to db', () => {
   test('validate staff payload before save', async () => {
@@ -59,7 +60,7 @@ describe('save staff data to db', () => {
     expect(result.first_name).toBe('Kooper');
   });
 
-  let staff0;
+  let staff0 : IStaff;
   test('empty staff temporal must be genrated with length 10 ', async () => {
     const body = {
       first_name: 'Kooper',
@@ -68,10 +69,10 @@ describe('save staff data to db', () => {
     };
 
     staff0 = await createStaffController(body);
-    expect(staff0.temporalPassword.length).toBe(10);
+    expect(staff0?.temporalPassword?.length).toBe(10);
   });
 
-  let staff1;
+  let staff1 :IStaff;
   test('if given password is equal temporalPassword must match that', async () => {
     const body = {
       first_name: 'Kooper',

@@ -1,18 +1,9 @@
 import { Model, Schema, model, Types } from 'mongoose';
 import { unqiueNumber, randomwPassword } from './Static';
+import {IStaff} from "../Interface/IStaff"
 
-interface Staff {
-  uid?: string;
-  first_name: string;
-  middle_name?: string;
-  last_name: string;
-  email: string;
-  address?: string;
-  shop_uid?: Types.ObjectId;
-  temporalPassword?: string;
-}
 
-const StaffSchema: Schema = new Schema<Staff>({
+const StaffSchema: Schema = new Schema<IStaff>({
   uid: { type: 'String' },
   first_name: { type: 'String', required: true },
   last_name: { type: 'String', required: true },
@@ -23,7 +14,7 @@ const StaffSchema: Schema = new Schema<Staff>({
   temporalPassword: { type: 'String', required: false },
 });
 
-StaffSchema.pre('save', function (this: Staff, next) {
+StaffSchema.pre('save', function (this: IStaff, next) {
   this.uid = unqiueNumber().toString();
   if (this?.temporalPassword?.length == 10) {
     this.uid = randomwPassword();
@@ -33,6 +24,6 @@ StaffSchema.pre('save', function (this: Staff, next) {
   next();
 });
 
-const StaffModel: Model<Staff> = model('Staff', StaffSchema);
+const StaffModel: Model<IStaff> = model('Staff', StaffSchema);
 
 export { StaffModel };

@@ -1,14 +1,15 @@
 import { asyncWrapper } from '../../middlewares/asyncWrapper';
 import { Request, Response } from 'express';
 import { ErrorResponse } from '../../middlewares/errorHandler';
-import { ShopModel, Shop } from '../../models/Shops';
+import { ShopModel } from '../../models/Shops';
+import {IShop} from "../../Interface/IShop"
 import { unqiueNumber } from '../../models/Static';
 import { successResponse } from '../../class/Response';
 import mongoose, { Types } from 'mongoose';
 
 const getAllShops = asyncWrapper(async (_req: Request, res: Response, next) => {
   try {
-    throw new ErrorResponse(404, 'shops not found');
+    throw new ErrorResponse(404,[ 'shops not found']);
   } catch (err) {
     next(err);
   }
@@ -26,11 +27,11 @@ const createShop = asyncWrapper(async (req: Request, res: Response) => {
         ])
       );
   } catch (err) {
-    throw new ErrorResponse(404, 'shop can not be created');
+    throw new ErrorResponse(404,[ 'shop can not be created']);
   }
 });
 
-const createShopController = async (body: Shop, exclude?: string[]) => {
+const createShopController = async (body: IShop, exclude?: [keyof IShop]) => {
   try {
     if (body?.sub_shops) {
       const saveResObjec = await createShopWithSubShopController(body, exclude);
@@ -57,16 +58,16 @@ Create Shop with sub shops,
 the sub shops has therir main_brach set as main shops _id
 */
 const createShopWithSubShopController = async (
-  body: Shop,
-  exclude?: string[]
+  body: IShop,
+  exclude?: [keyof IShop]
 ) => {
   const session = await mongoose.startSession();
   session.startTransaction({ comment: 'Trasnaction started' });
   try {
     //if body has sub_shops.
-    if (body?.sub_shops.length > 0) {
+    if (typeof body?.sub_shops!==undefined) {
       //create main shop
-      const sub_shops = body.sub_shops;
+      const sub_shops = body.sub_shops || [];
       delete body.sub_shops;
       const mainShop = new ShopModel(body);
       const mainShopSaveRes = (

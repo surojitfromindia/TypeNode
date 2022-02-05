@@ -1,17 +1,8 @@
 import { Model, Schema, model, Types } from 'mongoose';
 import { unqiueNumber } from './Static';
+import { IShop } from '../Interface/IShop';
 
-interface Shop {
-  uid?: string;
-  name: string;
-  address?: string;
-  staff_count: number;
-  main_brach?: Types.ObjectId;
-  sub_shops?: [Shop] ;
-  sub_shops_id ?: [Types.ObjectId];
-}
-
-const ShopSchema: Schema = new Schema<Shop>({
+const ShopSchema: Schema = new Schema<IShop>({
   uid: { type: 'String' },
   name: { type: 'String', required: true },
   address: { type: 'String', required: false },
@@ -19,11 +10,11 @@ const ShopSchema: Schema = new Schema<Shop>({
   main_brach: { type: Types.ObjectId, required: false },
 });
 
-ShopSchema.pre('save', function (this: Shop, next) {
+ShopSchema.pre('save', function (this: IShop, next) {
   this.uid = unqiueNumber().toString();
   next();
 });
 
-const ShopModel: Model<Shop> = model('Shop', ShopSchema);
+const ShopModel: Model<IShop> = model('Shop', ShopSchema);
 
-export { ShopModel, Shop };
+export { ShopModel };
