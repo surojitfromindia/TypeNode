@@ -58,7 +58,7 @@ describe('save single shop with multiple sub shop in data', () => {
     await dropMockDb();
     await closeMock();
   });
-  const mainShop = {
+  const mainShop:Shop = {
     name: 'main shop',
     staff_count: 1,
     sub_shops: [
@@ -73,8 +73,6 @@ describe('save single shop with multiple sub shop in data', () => {
   });
 
   test('sub shops main_branch must match main shops _id', async () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
     const result = await createShopController(mainShop);
     expect(result.name).toBe(mainShop.name);
     expect(result?.sub_shops?.length).toBe(2);

@@ -6,12 +6,13 @@
   "scripts": {
     "start": "ts-node ./src/server.ts",
     "dev": "nodemon ./src/server.ts",
+    "watch:debug": "nodemon --inspect=5858 -e ts,tsx --exec node -r ts-node/register ./src/server.ts",
     "test": "jest",
     "start:prod": "npm run build && node ./dist/src/server.js",
     "build": "npx tsc"
   },
   "keywords": [],
-  "author": "",
+  "author": "surojit paul",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^14.3.2",

@@ -5,7 +5,7 @@ import { Response, Request, NextFunction } from 'express';
 
 const validatePayload =
   (schema: ObjectSchema) =>
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     try {
       const payload = req?.body;
       await schema.validateAsync(payload);

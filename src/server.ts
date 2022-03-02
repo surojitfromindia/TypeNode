@@ -8,6 +8,7 @@ import { router as apiV1Router } from './routes/v1';
 
 dotenv.config({ debug: true, path: __dirname + '/.env' });
 
+//connect to db
 connectToDb();
 
 const app: Application = express();
