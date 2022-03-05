@@ -19,7 +19,7 @@ const createShop = asyncWrapper(async (req: Request, res: Response, next: NextFu
   try {
     const saveRes = await createShopController(req.body);
     res.locals.status = 200;
-    res.responseBody = successResponse(200, saveRes, 'shop created successfully', []);
+    res.responseBody = successResponse(saveRes, 'shop created successfully', ['__v','_id']);
     next();
   } catch (err) {
     throw new ErrorResponse(404, ['shop can not be created']);

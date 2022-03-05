@@ -1,5 +1,7 @@
 declare namespace Express {
-    interface Response {
-        responseBody : any
-    }
+  interface Response {
+    responseBody: import('../../Interface/IResponseBody').IResponseBody;
+    logs: [import('./../../Interface/ILogger').ILogger];
+    status: number;
+  }
 }

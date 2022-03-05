@@ -17,7 +17,7 @@ const createStaff = asyncWrapper(async (req: Request, res: Response, next: NextF
   try {
     const saveRes = await createStaffController(req.body);
     res.locals.status = 200;
-    res.responseBody = successResponse(200, saveRes, 'staff created successfully', ['_id', '__v']);
+    res.responseBody = successResponse(saveRes, 'staff created successfully', ['_id', '__v']);
     next();
   } catch (err) {
     throw new ErrorResponse(404, ['staff can not be created']);

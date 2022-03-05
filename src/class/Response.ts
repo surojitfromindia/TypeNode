@@ -1,3 +1,4 @@
+import { IResponseBody } from 'src/Interface/IResponseBody';
 
 class ErrorResponse extends Error {
   constructor(public statusCode: number, public message: string, public messages?: string[]) {
@@ -7,20 +8,13 @@ class ErrorResponse extends Error {
   }
 }
 
-interface successBody {
-  success: boolean;
-  status: number;
-  data: object;
-  message?: string;
-}
-
-const successResponse = (statusCode: number, body: any, message?: string, exclude?: string[]): successBody => {
+const successResponse = (body: any, message?: string, exclude?: string[]): IResponseBody => {
   if (exclude) {
-    for (const key in exclude) {
+    for (const key of exclude) {
       delete body[key];
     }
   }
-  return { success: true, status: statusCode, data: body, message };
+  return {  data: body, message };
 };
 
 export { ErrorResponse, successResponse };
