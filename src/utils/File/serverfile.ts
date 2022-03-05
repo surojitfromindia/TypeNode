@@ -2,7 +2,6 @@
 
 import * as fs from 'fs';
 import { Response } from 'express';
-import { PathLike } from 'fs';
 const serverHugeFile = async (fileName: string, res: Response) => {
   try {
     const readStream = fs.createReadStream('./src/static/'+fileName, {

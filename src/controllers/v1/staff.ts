@@ -1,9 +1,9 @@
 import { asyncWrapper } from '../../middlewares/asyncWrapper';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { ErrorResponse } from '../../middlewares/errorHandler';
-import { StaffModel  } from '../../models/Staffs';
+import { StaffModel } from '../../models/Staffs';
 import { successResponse } from '../../class/Response';
-import {IStaff} from "../../Interface/IStaff"
+import { IStaff } from '../../Interface/IStaff';
 
 const getAllStaff = asyncWrapper(async (_req: Request, res: Response, next) => {
   try {
@@ -13,22 +13,16 @@ const getAllStaff = asyncWrapper(async (_req: Request, res: Response, next) => {
   }
 });
 
-const createStaff = asyncWrapper(async (req: Request, res: Response) => {
+const createStaff = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
   try {
     const saveRes = await createStaffController(req.body);
-    res
-      .status(200)
-      .json(
-        successResponse(200, saveRes, 'staff created successfully', [
-          '_id',
-          '__v',
-        ])
-      );
+    res.locals.status = 200;
+    res.responseBody = successResponse(200, saveRes, 'staff created successfully', ['_id', '__v']);
+    next();
   } catch (err) {
-    throw new ErrorResponse(404,[ 'staff can not be created']);
+    throw new ErrorResponse(404, ['staff can not be created']);
   }
 });
-
 
 const createStaffController = async (body: object, exclude?: [keyof IStaff]) => {
   try {

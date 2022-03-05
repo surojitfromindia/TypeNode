@@ -1,5 +1,4 @@
 import type { ErrorRequestHandler, Response } from 'express';
-import { string } from 'joi';
 
 class ErrorResponse extends Error {
   constructor(public statusCode: number, public messages: string[]) {
