@@ -14,7 +14,7 @@ connectToDb();
 const app: Application = express();
 
 
-app.use(json({ limit: 100 }));
+app.use(json({ limit: 300 }));
 app.use('/api/v1', apiV1Router);
 app.use(errorHandler);
 

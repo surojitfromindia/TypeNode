@@ -10,7 +10,7 @@ const StaffSchema: Schema = new Schema<IStaff>({
   middle_name: { type: 'String', required: false },
   email: { type: 'String', required: true },
   address: { type: 'String', required: false },
-  shop_uid: { type: Types.ObjectId, ref: 'Shop', required: false },
+  shop_uid: { type: Types.ObjectId, required: false },
   temporalPassword: { type: 'String', required: false },
 });
 

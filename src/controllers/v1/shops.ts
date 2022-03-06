@@ -18,11 +18,23 @@ const getAllShops = asyncWrapper(async (_req: Request, res: Response, next) => {
 const createShop = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
   try {
     const saveRes = await createShopController(req.body);
-    res.locals.status = 200;
-    res.responseBody = successResponse(saveRes, 'shop created successfully', ['__v','_id']);
+    res.locals.status = 201;
+    res.responseBody = successResponse(saveRes, 'shop created successfully', ['__v', '_id']);
     next();
   } catch (err) {
     throw new ErrorResponse(404, ['shop can not be created']);
+  }
+});
+
+const getShop = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const shop_uid = req.params.uid;
+    const shop = await ShopModel.findOne({ uid: shop_uid }).populate({ path: 'sub_shops_information', select: 'name' });
+    res.locals.status = 200;
+    res.responseBody = successResponse(shop, 'shop found', ['__v', '_id']);
+    next();
+  } catch (err) {
+    throw new ErrorResponse(404, ['shop not found']);
   }
 });
 
@@ -62,7 +74,9 @@ const createShopWithSubShopController = async (body: IShop, exclude?: [keyof ISh
       const sub_shops = body.sub_shops || [];
       delete body.sub_shops;
       const mainShop = new ShopModel(body);
-      const mainShopSaveRes = (await mainShop.save({ session: session })).toObject();
+      const mainShopSaveResDoc = await mainShop.save({ session: session });
+      const mainShopSaveRes = mainShopSaveResDoc.toJSON();
+
       const mainShopId = mainShopSaveRes._id;
       //loop throw each sub shop and set main_brach
       //create a bulk array
@@ -73,7 +87,7 @@ const createShopWithSubShopController = async (body: IShop, exclude?: [keyof ISh
           insertOne: {
             document: {
               ...shop,
-              main_brach: mainShopId,
+              main_branch: mainShopId,
               uid: unqiueNumber().toString(),
             },
           },
@@ -104,4 +118,4 @@ const createShopWithSubShopController = async (body: IShop, exclude?: [keyof ISh
   }
 };
 
-export { getAllShops, createShop, createShopController };
+export { getAllShops, getShop, createShop, createShopController };

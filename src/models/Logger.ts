@@ -6,6 +6,7 @@ const LogSchema: Schema = new Schema<ILogger>({
   uid: { type: 'String' },
   message: { type: 'String', required: true },
   date_time: { type: Date, required: true, default: Date.now },
+  action: { type: 'String', required: true },
 });
 
 LogSchema.pre('save', function (this: ILogger, next) {
