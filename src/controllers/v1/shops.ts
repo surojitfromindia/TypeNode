@@ -26,10 +26,13 @@ const createShop = asyncWrapper(async (req: Request, res: Response, next: NextFu
   }
 });
 
+//Get a shop information, provride sub shop(s) as well
 const getShop = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const shop_uid = req.params.uid;
-    const shop = await ShopModel.findOne({ uid: shop_uid }).populate({ path: 'sub_shops_information', select: 'name' });
+    const shop_uid = req.params.shop_uid;
+    const shop = await ShopModel.findOne({ uid: shop_uid })
+      .populate({ path: 'sub_shops_information', select: { uid: 1, name: 1, _id: 0 } })
+      .lean();
     res.locals.status = 200;
     res.responseBody = successResponse(shop, 'shop found', ['__v', '_id']);
     next();
@@ -37,6 +40,29 @@ const getShop = asyncWrapper(async (req: Request, res: Response, next: NextFunct
     throw new ErrorResponse(404, ['shop not found']);
   }
 });
+
+//Get sub shop(s) of shop if any
+const getSubShops = (type: 'multiple' | 'single') =>
+  asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const mainShop = await ShopModel.findOne({ uid: req.params.shop_uid });
+
+      if (type === 'single') {
+        const sub_shop_uid = req.params.sub_shop_uid;
+        const sub_shop = await ShopModel.findOne({ uid: sub_shop_uid, main_branch: mainShop?._id });
+        res.locals.status = 200;
+        res.responseBody = successResponse(sub_shop, 'sub shop found', ['__v', '_id']);
+        next();
+      } else if (type === 'multiple') {
+        const sub_shops = await ShopModel.find({ main_branch: mainShop?._id });
+        res.locals.status = 200;
+        res.responseBody = successResponse(sub_shops, 'sub shops found', ['__v', '_id']);
+        next();
+      }
+    } catch (err) {
+      throw new ErrorResponse(404, ['sub shop not found']);
+    }
+  });
 
 const createShopController = async (body: IShop, exclude?: [keyof IShop]) => {
   try {
@@ -118,4 +144,4 @@ const createShopWithSubShopController = async (body: IShop, exclude?: [keyof ISh
   }
 };
 
-export { getAllShops, getShop, createShop, createShopController };
+export { getAllShops, getShop, getSubShops, createShop, createShopController };

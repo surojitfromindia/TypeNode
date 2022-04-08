@@ -23,3 +23,4 @@ interface IProductCategory extends IModel {
   main_brach?: Types.ObjectId;
 }
 export { IProduct, IProductCategory };
+
