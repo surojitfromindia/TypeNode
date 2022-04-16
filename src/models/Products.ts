@@ -2,8 +2,12 @@ import { Model, Schema, model, Types, IndexDefinition } from 'mongoose';
 import { unqiueNumber } from './Static';
 import { IProduct } from '../Interface/IProducts';
 
-const ProductSchema: Schema = new Schema<IProduct>({
-  uid: { type: 'String', index: true, unique: true, default: unqiueNumber },
+interface IProductModel extends Model<IProduct> {
+  updateName(product_uid: string | string[], new_name: string): Promise<IProduct | any>;
+}
+
+const ProductSchema: Schema<IProduct, IProductModel> = new Schema<IProduct, IProductModel>({
+  uid: { type: 'String', index: true, unique: true },
   //   category: { type: Types.ObjectId, ref: 'Category', required: true },
   inventories: {
     type: [Types.ObjectId],
@@ -33,11 +37,31 @@ const index: IndexDefinition = {
 
 ProductSchema.index(index);
 
-// ProductSchema.pre('save', function (this: IProduct, next) {
-//   this.uid = unqiueNumber().toString();
-//   next();
-// });
+ProductSchema.static('updateName', function (product_uid: string | string[], name: string) {
+  const product_new_name = name;
+  if (typeof product_uid === 'string') {
+    const product = Product.findOneAndUpdate(
+      { uid: product_uid },
+      { $set: { name: product_new_name } },
+      { new: true }
+    ).lean();
+    return product;
+  }
+  return Product.updateMany({ uid: { $in: product_uid } }, { $set: { name: product_new_name } }).lean();
+});
 
-const ProductModel: Model<IProduct> = model('Product', ProductSchema);
+ProductSchema.pre('save', function (this: IProduct, next) {
+  this.uid = unqiueNumber().toString();
+  next();
+});
 
-export { ProductModel };
+ProductSchema.pre('insertMany', function (this: IProduct[], next) {
+  this.forEach((product: IProduct) => {
+    product.uid = unqiueNumber().toString();
+  });
+  next();
+});
+
+const Product = model<IProduct, IProductModel>('Product', ProductSchema);
+
+export { Product };

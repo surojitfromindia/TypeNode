@@ -1,6 +1,12 @@
 import { connectMock, closeMock, dropCollection } from '../connection/db';
-import { createProductController, getProductController } from '../controllers/v1/products';
+import {
+  createProductController,
+  getProductController,
+  patchProductController,
+  patchProductsController,
+} from '../controllers/v1/products';
 import { Types } from 'mongoose';
+import { TransactionError } from '../utils/Errors';
 
 const STATICMAINBRANCHID = '62528da6efa3ba944ec28984';
 
@@ -73,5 +79,78 @@ describe('Create a new product', () => {
     const product = await getProductController(product_uid, select);
 
     expect(Object.getOwnPropertyNames(product).length).toBe(select.length);
+  });
+});
+
+describe('update a product', () => {
+  let product_uid: string = '';
+
+  beforeAll(async () => {
+    await connectMock();
+    const products = await createProductController({
+      name: 'Asofodita',
+      prices: [
+        { currency: 'INR', price: 455.52 },
+        { currency: 'SAR', price: 460 },
+      ],
+      description: 'A herb',
+      main_branch: new Types.ObjectId(STATICMAINBRANCHID),
+    });
+    if (products.uid) product_uid = products.uid;
+  });
+  afterAll(async () => {
+    await dropCollection('products');
+    await closeMock();
+  });
+  test('product must be updated with new name', async () => {
+    let product = await patchProductController(product_uid, 'Apple', 'name');
+    expect(product.name).toBe('Apple');
+  });
+  test('update must throw an error if patch type is not valid', async () => {
+    // @ts-ignore
+    await expect(patchProductController(product_uid, 'Apple', 'invalid')).rejects.toThrow(new TransactionError('P03'));
+  });
+});
+
+describe('update multiple products', () => {
+  let product_uid_1: string = '';
+  let product_uid_2: string = '';
+
+  beforeAll(async () => {
+    await connectMock();
+    const product_1 = await createProductController({
+      name: 'Asofodita',
+      prices: [
+        { currency: 'INR', price: 455.52 },
+        { currency: 'SAR', price: 460 },
+      ],
+      description: 'A herb',
+      main_branch: new Types.ObjectId(STATICMAINBRANCHID),
+    });
+    const product_2 = await createProductController({
+      name: 'Bilok',
+      prices: [
+        { currency: 'INR', price: 455.52 },
+        { currency: 'SAR', price: 460 },
+      ],
+      description: 'A herb',
+      main_branch: new Types.ObjectId(STATICMAINBRANCHID),
+    });
+    if (product_1.uid) product_uid_1 = product_1.uid;
+    if (product_2.uid) product_uid_2 = product_2.uid;
+  });
+  afterAll(async () => {
+    await dropCollection('products');
+    await closeMock();
+  });
+  test('all products must be updated with new name', async () => {
+    let product = await patchProductsController([product_uid_1, product_uid_2], 'Apple', 'name');
+    expect(typeof product).toBe('string');
+  });
+  test('update must throw an error if patch type is not valid', async () => {
+    // @ts-ignore
+    await expect(patchProductController([product_uid_1, product_uid_2], 'Apple', 'invalid')).rejects.toThrow(
+      new TransactionError('P03')
+    );
   });
 });
