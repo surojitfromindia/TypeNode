@@ -1,4 +1,4 @@
-import Joi, { ObjectSchema, ValidationError } from 'joi';
+import { ObjectSchema, ValidationError } from 'joi';
 import { ErrorResponse } from '../middlewares/errorHandler';
 import { errorArray } from '../validation/utils';
 import { Response, Request, NextFunction } from 'express';
