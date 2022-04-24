@@ -1,7 +1,3 @@
-interface IError {
-  [key: string]: string;
-}
-
 enum ERRORLIST {
   //for product controller
   P01 = 'Product not found',
@@ -21,5 +17,7 @@ class TransactionError extends Error {
     this.message = ERRORLIST[code];
   }
 }
+
+
 
 export { TransactionError };

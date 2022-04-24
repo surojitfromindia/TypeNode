@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { ErrorResponse } from '../../middlewares/errorHandler';
 import { successResponse } from '../../class/Response';
 import { IProduct } from '../../Interface/IProducts';
-import { Product } from '../../models/Products';
+import { Product, UpdateableFields } from '../../models/Products';
 import { TransactionError } from '../../utils/Errors';
 
 const createProduct = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
@@ -31,26 +31,30 @@ const getProductController = async (product_uid: string, include?: string[]) => 
   try {
     if (include) {
       if (include.length > 0) {
-        let projection = include.reduce((curr, acc) => ({ [acc]: 1, ...curr }), {});
-        let product = await Product.findOne({ uid: product_uid }, { _id: 0, ...projection }).lean();
+        const projection = include.reduce((curr, acc) => ({ [acc]: 1, ...curr }), {});
+        const product = await Product.findOne({ uid: product_uid }, { _id: 0, ...projection }).lean();
         return product;
       }
     }
     const productSaveRes = await Product.findOne({ uid: product_uid }).lean();
-    const { _id, ...product } = productSaveRes!;
+    if (productSaveRes?._id) {
+      delete productSaveRes._id;
+    }
+    const { ...product } = productSaveRes;
     return product;
   } catch (error) {
     throw error;
   }
 };
 
-const patchProductController = async (product_uid: string, new_name: string, patch_type: PatchType) => {
+const patchProductController = async (product_uid: string, new_name: string, patch_type: UpdateableFields) => {
   try {
     switch (patch_type) {
       case 'name': {
-        let renamed_product = await Product.updateName(product_uid, new_name);
+        const renamed_product = await Product.updateField(product_uid, patch_type, new_name);
         if ('_id' in renamed_product) {
-          const { _id, ...product } = renamed_product!;
+          delete renamed_product._id;
+          const { ...product } = renamed_product;
           return product;
         }
       }
@@ -58,9 +62,11 @@ const patchProductController = async (product_uid: string, new_name: string, pat
         throw new TransactionError('P03');
       }
     }
-  } catch (error: any) {
-    if (error.hasOwnProperty('code')) {
-      throw error;
+  } catch (error) {
+    if (error instanceof TransactionError) {
+      if (error.hasOwnProperty('code')) {
+        throw error;
+      }
     }
     throw new TransactionError('P00');
   }
@@ -69,29 +75,33 @@ const patchProductController = async (product_uid: string, new_name: string, pat
 const patchProductsController = async (
   product_uids: string[],
   new_name: string,
-  patch_type: PatchType
+  patch_type: UpdateableFields
 ): Promise<string> => {
   try {
     switch (patch_type) {
-      case 'name': {
-        let renamed_products = await Product.updateName(product_uids, new_name);
+      case 'name':
+      case 'category':
+      case 'inventories':
+      case 'description' :
+      case 'prices': {
+        const renamed_products = await Product.updateField(product_uids, patch_type ,new_name);
         if (!('_id' in renamed_products)) {
           return `products updated successfully`;
         }
-      }
+      }          
       default: {
         throw new TransactionError('P03');
       }
     }
-  } catch (error: any) {
-    if (error.hasOwnProperty('code')) {
-      throw error;
+  } catch (error) {
+    if (error instanceof TransactionError) {
+      if (error.hasOwnProperty('code')) {
+        throw error;
+      }
     }
     throw new TransactionError('P00');
   }
 };
-
-type PatchType = 'name' | 'price' | 'quantity' | 'description' | 'image';
 
 export {
   createProduct,

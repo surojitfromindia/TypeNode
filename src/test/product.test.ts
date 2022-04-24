@@ -54,7 +54,7 @@ describe('Create a new product', () => {
     expect(products.prices[1].price).toBe(460);
   });
 
-  let product_uid: string = '';
+  let product_uid = '';
   test('product must have a uid', async () => {
     const products = await createProductController({
       name: 'Asofodita',
@@ -83,7 +83,7 @@ describe('Create a new product', () => {
 });
 
 describe('update a product', () => {
-  let product_uid: string = '';
+  let product_uid = '';
 
   beforeAll(async () => {
     await connectMock();
@@ -103,7 +103,7 @@ describe('update a product', () => {
     await closeMock();
   });
   test('product must be updated with new name', async () => {
-    let product = await patchProductController(product_uid, 'Apple', 'name');
+   const  product = await patchProductController(product_uid, 'Apple', 'name');
     expect(product.name).toBe('Apple');
   });
   test('update must throw an error if patch type is not valid', async () => {
@@ -113,8 +113,8 @@ describe('update a product', () => {
 });
 
 describe('update multiple products', () => {
-  let product_uid_1: string = '';
-  let product_uid_2: string = '';
+  let product_uid_1 = '';
+  let product_uid_2 = '';
 
   beforeAll(async () => {
     await connectMock();
@@ -144,7 +144,7 @@ describe('update multiple products', () => {
     await closeMock();
   });
   test('all products must be updated with new name', async () => {
-    let product = await patchProductsController([product_uid_1, product_uid_2], 'Apple', 'name');
+    const product = await patchProductsController([product_uid_1, product_uid_2], 'Apple', 'name');
     expect(typeof product).toBe('string');
   });
   test('update must throw an error if patch type is not valid', async () => {
