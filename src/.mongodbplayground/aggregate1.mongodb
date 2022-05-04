@@ -1,0 +1,139 @@
+use('simpleshop')
+
+//how to use 
+//$setWindowField aggreate stage
+
+
+const transactions = [
+  // {
+  //   year : 2019,
+  //   account:1,
+  //   debit: 10,
+  //   credit: 0,
+  //   number : 1,
+  // },
+  //  {
+  //   year : 2019,
+  //   account:1,
+  //   debit: 0,
+  //   credit: 100,
+  //   number : 2,
+  // },
+  //  {
+  //   year : 2020,
+  //   account:1,
+  //   debit: 30,
+  //   credit: 0,
+  //   number : 3,
+  // },
+  //  {
+  //   year : 2020,
+  //   account:1,
+  //   debit: 10,
+  //   credit: 0,
+  //   number : 4,
+  // },
+  //  {
+  //   year : 2020,
+  //   account:1,
+  //   debit: 0,
+  //   credit: 50,
+  //   number : 5,
+  // },
+  {
+    year : 2020,
+    account: 2,
+    debit: 30,
+    credit: 0,
+    number : 3,
+  },
+   {
+    year : 2019,
+    account: 2,
+    debit: 10,
+    credit: 0,
+    number : 4,
+  },
+   {
+    year : 2020,
+    account: 2,
+    debit: 0,
+    credit: 78,
+    number : 5,
+  }
+]
+// db.transactions.insertMany(transactions)
+
+const aggreateByTotalSalesUntilThatYear2 = [
+    {
+        $match : {
+            year : {
+                $gte : 2017
+            }
+        }
+    },
+    {
+       
+        $setWindowFields: {
+          partitionBy: "$account",
+          sortBy: {
+            year: 1
+          },
+          output: {
+            balance: {
+              $sum :{
+                    $add : ["$debit",{$subtract:[0,"$credit"]}]
+                  },
+              window: {
+                documents: ["unbounded","current"],
+              }
+            },
+          }
+        }
+    },
+    {
+      $group:{
+        _id : {
+          account : '$account'
+        },
+        prev_transactions : {
+          $push : {
+            $cond:{
+              if : {
+                $lt : ["$year", 2020]
+              },
+              then : "$$CURRENT",
+              else : "$$REMOVE"
+            }
+          }
+        },
+        other_transactions : {
+          $push : {
+            $cond:{
+              if : {
+                $gte : ["$year", 2020]
+              },
+              then : "$$CURRENT",
+              else : "$$REMOVE"
+            }
+          }
+        }
+      }
+    },
+    {
+      $group :{
+        _id : "$_id.account",
+        opening_balance : {
+          $sum: { $abs : {  $last : "$prev_transactions.balance"}}
+        },
+        account_transactions : {
+          $first : "$other_transactions"
+        },
+        current_last_balance :{
+          $sum: { $abs :{$last :  "$other_transactions.balance"}}
+
+        }
+      }
+    }
+]
+db.transactions.aggregate(aggreateByTotalSalesUntilThatYear2).pretty()

@@ -5,7 +5,9 @@ import { successResponse } from '../../class/Response';
 import { IProduct } from '../../Interface/IProducts';
 import { Product, UpdateableFields } from '../../models/Products';
 import { TransactionError } from '../../utils/Errors';
+import Util from 'src/utils/Util';
 
+//create a single product
 const createProduct = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
   try {
     const saveRes = await createProductController(req.body);
@@ -14,6 +16,24 @@ const createProduct = asyncWrapper(async (req: Request, res: Response, next: Nex
     next();
   } catch (err) {
     throw new ErrorResponse(404, ['Product can not be created']);
+  }
+});
+
+//find a single product from the database
+const getProduct = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    let select_fields: string[] = [];
+
+    if (typeof req?.query?.select === 'string') {
+      select_fields = Util.removeElementFromArray(req.query.select, ['_id', 'createdAt', 'updatedAt']);
+    }
+    
+    const product = await getProductController(req.params.product_uid, select_fields);
+    res.locals.status = 200;
+    res.responseBody = successResponse(product, 'Product found successfully', ['__v', '_id']);
+    next();
+  } catch (error) {
+    throw new ErrorResponse(404, ['Product not found']);
   }
 });
 
@@ -82,13 +102,13 @@ const patchProductsController = async (
       case 'name':
       case 'category':
       case 'inventories':
-      case 'description' :
+      case 'description':
       case 'prices': {
-        const renamed_products = await Product.updateField(product_uids, patch_type ,new_name);
+        const renamed_products = await Product.updateField(product_uids, patch_type, new_name);
         if (!('_id' in renamed_products)) {
           return `products updated successfully`;
         }
-      }          
+      }
       default: {
         throw new TransactionError('P03');
       }
@@ -105,6 +125,7 @@ const patchProductsController = async (
 
 export {
   createProduct,
+  getProduct,
   createProductController,
   getProductController,
   patchProductController,

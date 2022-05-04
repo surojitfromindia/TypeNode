@@ -4,4 +4,4 @@ node_modules
 Snip
 # ignore .env file
 .env
-.mongodbplayground
+# .mongodbplayground

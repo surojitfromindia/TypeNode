@@ -1,5 +1,18 @@
 import Util from '../utils/Util';
 
+
+
+describe('util function test',()=>{
+  
+
+describe('removelement', () => {
+  test('given element should be remove from array', () => {
+  let orginal_array = ['A', 'B', 'C', 'D', 'E', 'F'];
+  let remove_fields = ['A', 'B', 'C'];
+  let filtted_array = ['D', 'E', 'F'];
+  expect(Util.removeElementFromArray(orginal_array, remove_fields)).toEqual(filtted_array);
+});
+});
 describe('is empty check', () => {
   test('has isEmpty method', () => {
     expect(Util.hasStaticMethod('isEmpty')).toBe(true);
@@ -46,6 +59,6 @@ describe('is empty check', () => {
       const st = { name: 'Apple' };
       expect(Util.isEmpty<object>(st)).toBe(false);
     });
-
   });
 });
+})

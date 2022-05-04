@@ -1,6 +1,6 @@
 //api route for shop infomation
 import { Router } from 'express';
-import { createProduct } from '../../controllers/v1/products';
+import { createProduct, getProduct } from '../../controllers/v1/products';
 import { activityLogger } from '../../middlewares/activityLogger';
 import { responseHandler } from '../../middlewares/responseHandler';
 import { LogModel } from '../../models/Logger';
@@ -14,5 +14,6 @@ router.post(
   activityLogger(LogModel, { message: 'Products created', action: LoggerAction.CREATE }),
   responseHandler
 );
+router.get("/:product_uid", getProduct, responseHandler);
 
 export { router };

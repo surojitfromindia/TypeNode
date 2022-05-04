@@ -1,6 +1,7 @@
 import { asyncWrapper } from '../../middlewares/asyncWrapper';
 import { Request, Response } from 'express';
 import { serverHugeFile } from '../../utils/File/serverfile';
+import { EventEmitter } from 'events'
 
 const downloadFile = asyncWrapper(
   async (_req: Request, res: Response, next) => {
