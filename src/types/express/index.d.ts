@@ -4,4 +4,7 @@ declare namespace Express {
     logs: [import('./../../Interface/ILogger').ILogger];
     status: number;
   }
+  interface Request {
+    userinfo : import ("./../../Interface/IUser").IUser
+  }
 }

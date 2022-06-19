@@ -15,11 +15,17 @@
   "author": "surojit paul",
   "license": "ISC",
   "dependencies": {
+    "@types/passport": "^1.0.9",
+    "@types/passport-jwt": "^3.0.6",
     "axios": "^0.26.1",
+    "bcrypt": "^5.0.1",
     "dotenv": "^14.3.2",
     "express": "^4.17.2",
     "joi": "^17.5.0",
-    "mongoose": "^6.1.8"
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.1.8",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

@@ -3,9 +3,12 @@ import { Request, Response } from 'express';
 import { router as ShopRoute } from './v1/shops';
 import { router as FileRoute } from './v1/files';
 import { router as ProductRoute } from './v1/products';
+import { router as AuthRoute } from './v1/auth';
+import passport from 'passport';
 
 const router: Router = Router({ caseSensitive: true });
 
+router.use(passport.initialize())
 //get test
 router.get('/', (_req: Request, res: Response) => {
   res.status(200).send('API v1');
@@ -21,6 +24,7 @@ router.use('/shops', ShopRoute);
 router.use('/files', FileRoute);
 router.use('/products', ProductRoute);
 router.get('/chuncked', chunckedResponse);
+router.use('/auth', AuthRoute);
 
 router.all('/*', (_req: Request, res) => {
   res.status(404).send('Not Found');

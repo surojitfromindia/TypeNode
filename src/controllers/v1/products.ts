@@ -5,7 +5,7 @@ import { successResponse } from '../../class/Response';
 import { IProduct } from '../../Interface/IProducts';
 import { Product, UpdateableFields } from '../../models/Products';
 import { TransactionError } from '../../utils/Errors';
-import Util from 'src/utils/Util';
+import Util from '../../utils/Util';
 
 //create a single product
 const createProduct = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {

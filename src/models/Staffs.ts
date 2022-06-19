@@ -3,6 +3,7 @@ import { unqiueNumber, randomwPassword } from './Static';
 import {IStaff} from "../Interface/IStaff"
 
 
+
 const StaffSchema: Schema = new Schema<IStaff>({
   uid: { type: 'String' },
   first_name: { type: 'String', required: true },
