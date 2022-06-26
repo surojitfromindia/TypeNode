@@ -15,6 +15,7 @@
   "author": "surojit paul",
   "license": "ISC",
   "dependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/passport": "^1.0.9",
     "@types/passport-jwt": "^3.0.6",
     "axios": "^0.26.1",
